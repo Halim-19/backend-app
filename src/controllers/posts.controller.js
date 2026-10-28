@@ -17,15 +17,15 @@ export const getPost = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const post = await postsService.create(req.body);
+  const post = await postsService.create(req.body, req.user.id);
   res.status(201).json(post);
 };
 
 export const updatePost = async (req, res) => {
-  res.json(await postsService.update(parseId(req.params.id), req.body));
+  res.json(await postsService.update(parseId(req.params.id), req.user.id, req.body));
 };
 
 export const deletePost = async (req, res) => {
-  await postsService.remove(parseId(req.params.id));
+  await postsService.remove(parseId(req.params.id), req.user.id);
   res.status(204).send();
 };

@@ -10,7 +10,6 @@ export const userService = {
     return user;
   },
 
-  create: (data) => prisma.user.create({ data }),
 
   update: (id, data) => prisma.user.update({ where: { id }, data }),
 
