@@ -4,8 +4,13 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import routes from './routes/index.js';
 import { notFound, errorHandler } from './middlewares/error.middleware.js';
+import { env } from './config/env.js';
+
 
 const app = express();
+
+
+if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
 app.use(helmet());          // 1. security headers
 app.use(cors());            // 2. cross-origin access

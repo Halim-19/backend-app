@@ -11,8 +11,8 @@ const signToken = (user) =>
 
 export const authService = {
   register: async ({ name, email, password }) => {
-    const hash = await bcrypt.hash(password, 12);
-    // duplicate email → Prisma P2002 → our error handler returns 409
+  const hash = await bcrypt.hash(password, env.bcryptRounds);    
+  // duplicate email → Prisma P2002 → our error handler returns 409
     const user = await prisma.user.create({
       data: { name, email, password: hash },
     });
