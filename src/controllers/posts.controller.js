@@ -8,8 +8,7 @@ const parseId = (value) => {
 };
 
 export const getPosts = async (req, res) => {
-  const authorId = req.query.authorId ? parseId(req.query.authorId) : undefined;
-  res.json(await postsService.getAll(authorId));
+  res.json(await postsService.getAll(res.locals.query));
 };
 
 export const getPost = async (req, res) => {

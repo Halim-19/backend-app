@@ -1,5 +1,7 @@
 import { prisma } from '../config/db.js';
 import { AppError } from '../utils/AppError.js';
+import { getPagination, buildMeta } from '../utils/pagination.js';
+
 
 // fetch a post and verify the caller owns it
 const getOwnedPost = async (id, userId) => {
@@ -12,11 +14,28 @@ const getOwnedPost = async (id, userId) => {
 };
 
 export const postsService = {
-  getAll: (authorId) =>
-    prisma.post.findMany({
-      where: authorId ? { authorId } : undefined,
-      orderBy: { id: 'asc' },
-    }),
+  
+
+  getAll: async ({ page, limit, authorId, search, sortBy, order }) => {
+    
+    const where = {
+      ...(authorId && { authorId }),
+      ...(search && { data: { contains: search, mode: 'insensitive' } }),
+    };
+
+    // sort by the chosen field, then by id so ties always come back in a stable order
+    const orderBy = [
+      { [sortBy]: order },
+      ...(sortBy !== 'id' ? [{ id: order }] : []),
+    ];
+
+    const [items, total] = await prisma.$transaction([
+      prisma.post.findMany({ where, orderBy, ...getPagination({ page, limit }) }),
+      prisma.post.count({ where }),
+    ]);
+
+    return { data: items, meta: buildMeta({ page, limit, total }) };
+  },
 
   getById: async (id) => {
     const post = await prisma.post.findUnique({ where: { id } });

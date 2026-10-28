@@ -8,7 +8,7 @@ const parseId = (value) => {
 };
 
 export const getUsers = async (req, res) => {
-  res.json(await userService.getAll());
+  res.json(await userService.getAll(res.locals.query));
 };
 
 export const getUser = async (req, res) => {
